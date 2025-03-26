@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user.dto';
@@ -12,17 +12,21 @@ export class UsersController {
 
     @Post('/signup')
     createUser(@Body() body: CreateUserDto) {
-        this._usersService.create(body.email, body.password)
+        return this._usersService.create(body.email, body.password)
     }
 
     @Patch(':id')
     editUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
-        this._usersService.update(parseInt(id), body)
+        return this._usersService.update(parseInt(id), body)
     }
 
     @Get(':id')
-    getUser(@Param('id') id: string) {
-        return this._usersService.findOne(parseInt(id))
+    async getUser(@Param('id') id: string) {
+        const user = await this._usersService.findOne(parseInt(id))
+        if(!user) {
+            throw new NotFoundException('user not found')
+        }
+        return user;
     }
 
     @Get()
