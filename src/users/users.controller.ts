@@ -2,9 +2,10 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, NotFound
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { SealizeInterceptor } from 'src/interceptors/seralize.interceptor';
+import { Serialize } from 'src/interceptors/seralize.interceptor';
 import { UserDto } from './dtos/user.dto';
 
+@Serialize(UserDto)
 @Controller('auth')
 export class UsersController {
 
@@ -22,7 +23,8 @@ export class UsersController {
         return this._usersService.update(parseInt(id), body)
     }
 
-    @UseInterceptors(new SealizeInterceptor(UserDto))
+    // @UseInterceptors(new SealizeInterceptor(UserDto))
+    // @Serialize(UserDto)
     @Get(':id')
     async getUser(@Param('id') id: string) {
         console.log('handler running')

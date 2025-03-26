@@ -3,8 +3,8 @@ POST http://localhost:3000/auth/signup
 content-type: application/json
 
 {
-    "email": "david.ceraniccc@gmail.com",
-    "password": "asdf"
+    "email": "david.ceranicccccc@gmail.com",
+    "password": "fffff"
 }
 
 ### find user
@@ -12,13 +12,13 @@ GET http://localhost:3000/auth/2
 
 
 ### find all
-GET http://localhost:3000/auth?email=david.ceraniccc@gmail.com
+GET http://localhost:3000/auth?email=david.ceranicccccc@gmail.com
 
 ### delete
-DELETE http://localhost:3000/auth/1
+DELETE http://localhost:3000/auth/3
 
 ### patch
-PATCH http://localhost:3000/auth/33
+PATCH http://localhost:3000/auth/2
 content-type: application/json
 
 {
