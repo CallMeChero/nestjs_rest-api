@@ -20,6 +20,11 @@ export class UsersController {
         return this._authService.signup(body.email, body.password)
     }
 
+    @Post('/signin')
+    signin(@Body() body: CreateUserDto) {
+        return this._authService.sigin(body.email, body.password)
+    }
+
     @Patch(':id')
     editUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
         return this._usersService.update(parseInt(id), body)

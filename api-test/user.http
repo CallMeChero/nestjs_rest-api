@@ -7,6 +7,15 @@ content-type: application/json
     "password": "marsha321"
 }
 
+### sigin
+POST http://localhost:3000/auth/signin
+content-type: application/json
+
+{
+    "email": "david.ceranic+new@gmail.com",
+    "password": "marsha321"
+}
+
 ### find user
 GET http://localhost:3000/auth/2
 
