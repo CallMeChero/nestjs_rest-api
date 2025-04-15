@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, NotFoundException, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, NotFoundException, Session } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { Serialize } from 'src/interceptors/seralize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { AuthService } from './auth.service';
+import { CurrentUser } from 'src/users/decorators/current-user.decorator';
+import { User } from './user.entity';
 
 @Serialize(UserDto)
 @Controller('auth')
@@ -15,14 +17,39 @@ export class UsersController {
         private _authService: AuthService
     ) {}
 
+    // @Get('/colors/:color')
+    // setColor(@Param('color') color: string, @Session() session: any) {
+    //     session.color = color;
+    // }
+
+    // @Get('/colors')
+    // getColor(@Session() session: any) {
+    //     return session.color;
+    // }
+
+    @Get('/whoami')
+    whoAmI(@CurrentUser() user: User) {
+        console.log(user)
+        return user
+    }
+
+    @Post('/signout')
+    async signOut(@Session() session: any) {
+        session.userId = null;
+    }
+
     @Post('/signup')
-    createUser(@Body() body: CreateUserDto) {
-        return this._authService.signup(body.email, body.password)
+    async createUser(@Body() body: CreateUserDto, @Session() session: any) {
+        const user = await this._authService.signup(body.email, body.password);
+        session.userId = user.id;
+        return user;
     }
 
     @Post('/signin')
-    signin(@Body() body: CreateUserDto) {
-        return this._authService.sigin(body.email, body.password)
+    async signin(@Body() body: CreateUserDto, @Session() session: any) {
+        const user = await this._authService.sigin(body.email, body.password);
+        session.userId = user.id;
+        return user;
     }
 
     @Patch(':id')

@@ -1,9 +1,17 @@
-### create user
+### who am i
+GET http://localhost:3000/auth/whoami
+content-type: application/json
+
+### signout
+POST http://localhost:3000/auth/signout
+content-type: application/json
+
+### signup
 POST http://localhost:3000/auth/signup
 content-type: application/json
 
 {
-    "email": "david.ceranic+new@gmail.com",
+    "email": "david.ceranic+new2@gmail.com",
     "password": "marsha321"
 }
 
