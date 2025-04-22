@@ -7,10 +7,10 @@ export interface ClassConstructor {
 }
 
 export function Serialize(dto: ClassConstructor) {
-    return UseInterceptors(new SealizeInterceptor(dto))
+    return UseInterceptors(new SerealizeInterceptor(dto))
 }
 
-export class SealizeInterceptor implements NestInterceptor {
+export class SerealizeInterceptor implements NestInterceptor {
     constructor(private dto: any) {}
 
 
