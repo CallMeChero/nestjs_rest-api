@@ -1,0 +1,13 @@
+
+POST http://localhost:3000/reports
+content-type: application/json
+
+{
+    "make": "BMW",
+    "model": "Grand Coupe",
+    "year": 2020,
+    "mileage": 121000,
+    "lng": 0,
+    "lat": 0,
+    "price": 33000
+}

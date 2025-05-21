@@ -17,36 +17,36 @@ describe('Authentication System', () => {
   });
 
   it('handles a signup request', () => {
-    const email = 'asdasddd@asd.asd'
+    const email = 'asdasddd@asd.asd';
     return request(app.getHttpServer())
       .post('/auth/signup')
       .send({
         email: email,
-        password: 'asddsaasd'
+        password: 'asddsaasd',
       })
       .expect(201)
       .then((res) => {
         const { id, email } = res.body;
         expect(id).toBeDefined();
-        expect(email).toEqual(email) 
-      })
+        expect(email).toEqual(email);
+      });
   });
 
-  it('signup as a new user then get the currently logged in user', async() => {
+  it('signup as a new user then get the currently logged in user', async () => {
     const email = 'asdf@asddf.com';
 
     const res = await request(app.getHttpServer())
       .post('/auth/signup')
-      .send({email, password: 'asdff'})
-      .expect(201)
+      .send({ email, password: 'asdff' })
+      .expect(201);
 
     const cookie = res.get('Set-Cookie');
-    
+
     const { body } = await request(app.getHttpServer())
       .get('/auth/whoami')
       .set('Cookie', cookie!)
-      .expect(200)
-    
-    expect(body.email).toEqual(email)
-  })
+      .expect(200);
+
+    expect(body.email).toEqual(email);
+  });
 });

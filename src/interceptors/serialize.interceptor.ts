@@ -1,29 +1,36 @@
-import { CallHandler, ExecutionContext, NestInterceptor, UseInterceptors } from "@nestjs/common";
-import { plainToInstance } from "class-transformer";
-import { map, Observable } from "rxjs";
+import {
+  CallHandler,
+  ExecutionContext,
+  NestInterceptor,
+  UseInterceptors,
+} from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
+import { map, Observable } from 'rxjs';
 
 export interface ClassConstructor {
-    new (...args: []): {}
+  new (...args: []): {};
 }
 
 export function Serialize(dto: ClassConstructor) {
-    return UseInterceptors(new SerealizeInterceptor(dto))
+  return UseInterceptors(new SerealizeInterceptor(dto));
 }
 
 export class SerealizeInterceptor implements NestInterceptor {
-    constructor(private dto: any) {}
+  constructor(private dto: any) {}
 
+  intercept(
+    context: ExecutionContext,
+    handler: CallHandler<any>,
+  ): Observable<any> | Promise<Observable<any>> {
+    // console.log('Im running before handler', context)
 
-    intercept(context: ExecutionContext, handler: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
-        // console.log('Im running before handler', context)
-
-        return handler.handle().pipe(
-            map((data: any) => {
-                // console.log('im running before response is sent out', data)
-                return plainToInstance(this.dto, data,  {
-                    excludeExtraneousValues: true
-                })
-            })
-        )
-    }
+    return handler.handle().pipe(
+      map((data: any) => {
+        // console.log('im running before response is sent out', data)
+        return plainToInstance(this.dto, data, {
+          excludeExtraneousValues: true,
+        });
+      }),
+    );
+  }
 }
