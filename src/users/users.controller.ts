@@ -16,10 +16,10 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
-import { AuthService } from './auth.service';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { User } from './user.entity';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from 'src/users/guards/auth.guard';
+import { AuthService } from 'src/users/auth.service';
 
 @Serialize(UserDto)
 @Controller('auth')
@@ -42,7 +42,7 @@ export class UsersController {
   @Get('/whoami')
   @UseGuards(AuthGuard)
   whoAmI(@CurrentUser() user: User) {
-    console.log(user);
+    console.log(user)
     return user;
   }
 
@@ -54,7 +54,6 @@ export class UsersController {
   @Post('/signup')
   async createUser(@Body() body: CreateUserDto) {
     const token = await this._authService.signup(body.email, body.password);
-    console.log(token)
     return token;
   }
 
@@ -73,7 +72,6 @@ export class UsersController {
   // @Serialize(UserDto)
   @Get(':id')
   async getUser(@Param('id') id: string) {
-    console.log('handler running');
     const user = await this._usersService.findOne(parseInt(id));
     if (!user) {
       throw new NotFoundException('user not found');
@@ -83,7 +81,7 @@ export class UsersController {
 
   @Get()
   findAllUsers(@Query('email') email: string) {
-    return this._usersService.find(email);
+    return this._usersService.findByEmail(email);
   }
 
   @Delete(':id')

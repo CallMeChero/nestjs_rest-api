@@ -3,10 +3,10 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
-import { AuthService } from './auth.service';
-import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthService } from 'src/users/auth.service';
+import { LocalStrategy } from './stategies/local.stategy';
+import { PassportModule } from '@nestjs/passport';
 
 export const jwtConstants = {
   secret: 'BLA BLA BLA BLA.',
@@ -15,6 +15,7 @@ export const jwtConstants = {
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
+    PassportModule,
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
@@ -25,11 +26,16 @@ export const jwtConstants = {
   providers: [
     UsersService,
     AuthService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CurrentUserInterceptor,
-    },
+    LocalStrategy
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: CurrentUserInterceptor,
+    // },
   ],
-  exports: [AuthService]
+  exports: [
+    AuthService,
+    UsersService,
+    LocalStrategy
+  ]
 })
 export class UsersModule {}

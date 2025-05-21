@@ -22,8 +22,8 @@ export class AuthService {
     password: string,
   ): Promise<{ accessToken: string }> {
     // check if email exists
-    const users = await this._usersService.find(email);
-    if (users.length) {
+    const existingUser = await this._usersService.findByEmail(email);
+    if (existingUser) {
       throw new BadRequestException('email in use');
     }
     // hash pwd
@@ -50,7 +50,7 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<{ accessToken: string }> {
-    const [user] = await this._usersService.find(email);
+    const user = await this._usersService.findByEmail(email);
 
     if (!user) {
       throw new NotFoundException('user not found');
@@ -68,6 +68,7 @@ export class AuthService {
     // return user
     return {
       accessToken: await this._jwtService.signAsync(payload),
+      ...payload
     };
   }
 }
