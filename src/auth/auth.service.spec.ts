@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from './auth.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
@@ -56,10 +56,10 @@ describe('AuthService', () => {
   });
 
   it('throws if an invalid password is provided', async () => {
-    fakeUsersService.find = () =>
-      Promise.resolve([
+    fakeUsersService.findByEmail = () =>
+      Promise.resolve(
         { email: 'asdf@asdf.com', password: 'laskdjf' } as User,
-      ]);
+      );
     await expect(
       service.sigin('laskdjf@alskdfj.com', 'passowrd'),
     ).rejects.toThrow(NotFoundException);

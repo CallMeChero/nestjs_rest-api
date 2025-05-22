@@ -10,16 +10,17 @@ import {
   NotFoundException,
   Session,
   UseGuards,
+  Request
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
-import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { User } from './user.entity';
-import { AuthGuard } from 'src/users/guards/auth.guard';
-import { AuthService } from 'src/users/auth.service';
+import { LocalAuthGuard } from 'src/auth/local-auth.guard';
+import { AuthService } from 'src/auth/auth.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Serialize(UserDto)
 @Controller('auth')
@@ -29,21 +30,17 @@ export class UsersController {
     private _authService: AuthService,
   ) {}
 
-  // @Get('/colors/:color')
-  // setColor(@Param('color') color: string, @Session() session: any) {
-  //     session.color = color;
-  // }
+  @Post('/signup')
+  async createUser(@Body() body: CreateUserDto) {
+    const token = await this._authService.signup(body);
+    return token;
+  }
 
-  // @Get('/colors')
-  // getColor(@Session() session: any) {
-  //     return session.color;
-  // }
-
-  @Get('/whoami')
-  @UseGuards(AuthGuard)
-  whoAmI(@CurrentUser() user: User) {
-    console.log(user)
-    return user;
+  @UseGuards(LocalAuthGuard)
+  @Post('/signin')
+  async signin(@Request() req) {
+    const token = await this._authService.sigin(req.user as CreateUserDto);
+    return token;
   }
 
   @Post('/signout')
@@ -51,18 +48,7 @@ export class UsersController {
     session.userId = null;
   }
 
-  @Post('/signup')
-  async createUser(@Body() body: CreateUserDto) {
-    const token = await this._authService.signup(body.email, body.password);
-    return token;
-  }
-
-  @Post('/signin')
-  async signin(@Body() body: CreateUserDto) {
-    const token = await this._authService.sigin(body.email, body.password);
-    return token;
-  }
-
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   editUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
     return this._usersService.update(parseInt(id), body);
@@ -70,6 +56,7 @@ export class UsersController {
 
   // @UseInterceptors(new SealizeInterceptor(UserDto))
   // @Serialize(UserDto)
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getUser(@Param('id') id: string) {
     const user = await this._usersService.findOne(parseInt(id));
